@@ -22,18 +22,8 @@ pub fn solve() -> SolutionPair {
     let mut dont_val = 0;
 
     for m in mul_binding.captures_iter(&input) {
-        let a: i32 = m
-            .get(1)
-            .unwrap() // Ensure the capture exists
-            .as_str() // Get the matched substring
-            .parse() // Parse it to an integer
-            .unwrap();
-        let b: i32 = m
-            .get(2)
-            .unwrap() // Ensure the capture exists
-            .as_str() // Get the matched substring
-            .parse() // Parse it to an integer
-            .unwrap();
+        let a: i32 = m.get(1).unwrap().as_str().parse().unwrap();
+        let b: i32 = m.get(2).unwrap().as_str().parse().unwrap();
         sol1 += a * b;
 
         let idx = m.get(1).unwrap().start();
