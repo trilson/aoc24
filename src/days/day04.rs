@@ -79,7 +79,9 @@ fn ms_check(cx1: i32, cy1: i32, cx2: i32, cy2: i32, grid: &Vec<String>) -> bool 
 
 fn count_xmas(idx: usize, idy: usize, grid: &Vec<String>) -> i32 {
     let xmas: Vec<char> = vec!['M', 'A', 'S'];
-    let dir = vec![
+
+    let mut count = 0;
+    for dir in vec![
         (0, 1),
         (0, -1),
         (1, 1),
@@ -88,10 +90,7 @@ fn count_xmas(idx: usize, idy: usize, grid: &Vec<String>) -> i32 {
         (-1, 1),
         (-1, -1),
         (-1, 0),
-    ];
-
-    let mut count = 0;
-    for dir in dir {
+    ] {
         let (mut x_nxt, mut y_nxt) = (idx as i32 + dir.0, idy as i32 + dir.1);
         let mut xmas_idx = 0;
         while let Some(true) = i_u(x_nxt)
