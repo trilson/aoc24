@@ -66,7 +66,7 @@ fn ms_check(cx1: i32, cy1: i32, cx2: i32, cy2: i32, grid: &Vec<String>) -> bool 
                 .unwrap(),
         );
     }
-    if cx2 >= 0 && cx2 < grid.len() as i32 && cy2 >= 0 && cy2 < grid.len() as i32 {
+    if c.len() == 1 && cx2 >= 0 && cx2 < grid.len() as i32 && cy2 >= 0 && cy2 < grid.len() as i32 {
         c.remove(
             &grid
                 .get(cx2 as usize)
