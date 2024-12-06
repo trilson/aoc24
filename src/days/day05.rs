@@ -11,20 +11,20 @@ pub fn solve() -> SolutionPair {
     let mut sol1: i32 = 0;
     let mut sol2: i32 = 0;
 
-    let mut dependency_map: HashMap<&str, HashSet<&str>> = HashMap::new();
+    let mut dep_map: HashMap<&str, HashSet<&str>> = HashMap::new();
     for l in lines.iter() {
         if l.contains('|') {
             let mut l_split = l.split('|').rev();
-            dependency_map
+            dep_map
                 .entry(l_split.next().unwrap())
                 .or_insert_with(|| HashSet::new())
                 .insert(l_split.next().unwrap());
         } else if l != "" {
             let mut pages: Vec<&str> = l.split(',').collect();
-            if is_valid(&pages, &dependency_map) {
+            if is_valid(&pages, &dep_map) {
                 sol1 += mid_point(&pages);
             } else {
-                pages.sort_by(|a, b| compare(a, b, &dependency_map));
+                pages.sort_by(|a, b| compare(a, b, &dep_map));
                 sol2 += mid_point(&pages);
             }
         }
