@@ -45,6 +45,7 @@ fn compare(a: &str, b: &str, dep_map: &HashMap<&str, HashSet<&str>>) -> Ordering
         Ordering::Greater
     }
 }
+
 fn is_valid(pages: &Vec<&str>, dep_map: &HashMap<&str, HashSet<&str>>) -> bool {
     let mut forbidden: HashSet<&str> = HashSet::new();
     let mut p_iter = pages.iter();
