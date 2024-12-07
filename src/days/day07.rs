@@ -5,15 +5,10 @@ pub fn solve() -> SolutionPair {
     let mut sol1: i64 = 0;
     let mut sol2: i64 = 0;
 
-    for mut line in lines.iter().map(|l| l.split(':')) {
-        let target: i64 = line
-            .next()
-            .expect("Must have a target")
-            .parse()
-            .expect("Target must be a number");
-        let numbers: Vec<i64> = line
-            .next()
-            .expect("Must have components")
+    for line in lines.iter().map(|l| l.split_once(':')) {
+        let (target_str, numbers_str) = line.expect("Must have a target and components");
+        let target: i64 = target_str.parse().expect("Target must be a number");
+        let numbers: Vec<i64> = numbers_str
             .split_whitespace()
             .map(|el| el.parse().expect("Component must be a number"))
             .collect();
