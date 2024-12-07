@@ -20,8 +20,8 @@ pub fn solve() -> SolutionPair {
 
         if is_valid(numbers.get(0).unwrap(), &target, &numbers[1..], false) {
             sol1 += target;
-        }
-        if is_valid(numbers.get(0).unwrap(), &target, &numbers[1..], true) {
+            sol2 += target;
+        } else if is_valid(numbers.get(0).unwrap(), &target, &numbers[1..], true) {
             sol2 += target;
         }
     }
