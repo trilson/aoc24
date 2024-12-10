@@ -60,16 +60,16 @@ fn find_paths(
         } else {
             if point.val - previous != 1 {
                 return Vec::new();
-            } else if point.val == 9 {
-                return vec![point];
-            } else {
-                let mut this_nines: Vec<Point> = Vec::new();
-                for (dr, dc) in [(0, 1), (1, 0), (0, -1), (-1, 0)] {
-                    this_nines.extend(find_paths(row + dr, col + dc, &grid, visited, point.val));
-                }
-                visited.insert((point, previous), this_nines.clone());
-                return this_nines;
             }
+            if point.val == 9 {
+                return vec![point];
+            }
+            let mut this_nines: Vec<Point> = Vec::new();
+            for (dr, dc) in [(0, 1), (1, 0), (0, -1), (-1, 0)] {
+                this_nines.extend(find_paths(row + dr, col + dc, &grid, visited, point.val));
+            }
+            visited.insert((point, previous), this_nines.clone());
+            return this_nines;
         }
     } else {
         Vec::new()
