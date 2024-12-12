@@ -1,32 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::{utils::files::lines_from_file, Solution, SolutionPair};
-
-#[derive(Eq, PartialEq, Debug, Hash, Clone, Copy)]
-struct Point {
-    row: i32,
-    col: i32,
-    val: i32,
-}
-
-impl Point {
-    fn from(row: i32, col: i32, grid: &[String]) -> Option<Self> {
-        if row >= 0_i32 && row < grid.len() as i32 && col >= 0_i32 && col < grid.len() as i32 {
-            grid.get(row as usize)
-                .and_then(|r| r.chars().nth(col as usize))
-                .and_then(|ch| ch.to_digit(10))
-                .and_then(|digit| {
-                    Some(Self {
-                        row: row as i32,
-                        col: col as i32,
-                        val: digit as i32,
-                    })
-                })
-        } else {
-            None
-        }
-    }
-}
+use crate::{utils::{files::lines_from_file, point::Point}, Solution, SolutionPair};
 
 pub fn solve() -> SolutionPair {
     let lines: Vec<String> = lines_from_file("input/day10.txt");
