@@ -23,7 +23,7 @@ fn pebble_blink(pebble: u64, blinks: u32) -> u64 {
         return pebble_blink(1, blinks - 1);
     }
     let digits = pebble.ilog10() + 1;
-    if pebble > 9 && digits % 2 == 0 {
+    if digits % 2 == 0 {
         let pow_ten = 10_u64.pow(digits / 2);
         return pebble_blink(pebble / pow_ten, blinks - 1)
             + pebble_blink(pebble % pow_ten, blinks - 1);

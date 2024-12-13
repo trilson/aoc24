@@ -5,8 +5,8 @@ const DIR: &[(i32, i32)] = &[(0, 1), (0, -1), (1, 0), (-1, 0)];
 
 #[derive(PartialEq, Eq, Copy, Clone, Debug, Ord, PartialOrd, Hash)]
 enum FenceDirection {
-    Vertical,
-    Horizontal,
+    Vertical = 0,
+    Horizontal = 1,
 }
 
 #[derive(Debug, Clone, Copy)]
