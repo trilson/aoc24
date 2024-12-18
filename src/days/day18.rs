@@ -44,21 +44,19 @@ fn solve_pt2(coords: &Vec<(i32, i32)>) -> String {
 }
 
 fn min_path(fallen: &Vec<(i32, i32)>, fallen_count: usize) -> Option<i32> {
-    let fallen_set = fallen
-        .into_iter()
+    let mut visited = fallen
+        .iter()
         .take(fallen_count)
-        .collect::<HashSet<&(i32, i32)>>();
+        .cloned()
+        .collect::<HashSet<(i32, i32)>>();
 
-    let mut q: VecDeque<(i32, i32, i32)> = VecDeque::new();
-    q.push_back((0, 0, 0));
-
-    let mut visited: HashSet<(i32, i32)> = HashSet::new();
+    let mut q: VecDeque<(i32, i32, i32)> = VecDeque::from([(0, 0, 0)]);
     while let Some((col, row, dist)) = q.pop_front() {
-        let path = &(col, row);
-        if visited.contains(path) || fallen_set.contains(path) {
+        let path = (col, row);
+        if visited.contains(&path) {
             continue;
         }
-        visited.insert(*path);
+        visited.insert(path);
         if row < 0 || col < 0 || row > ROWS || col > COLS {
             continue;
         }
