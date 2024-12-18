@@ -71,8 +71,7 @@ fn min_path(fallen: &Vec<(i32, i32)>, fallen_count: usize) -> Option<i32> {
 }
 
 fn parse_line(input: &str) -> IResult<&str, (i32, i32)> {
-    let mut separated_pair = separated_pair(parse_i32, char(','), parse_i32);
-    separated_pair(input)
+    separated_pair(parse_i32, char(','), parse_i32)(input)
 }
 
 fn parse_input(input: &str) -> IResult<&str, Vec<(i32, i32)>> {
