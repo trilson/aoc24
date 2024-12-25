@@ -1,19 +1,26 @@
-use std::collections::{HashSet, VecDeque};
-
 use bimap::BiMap;
+use cached::proc_macro::cached;
+use itertools::Itertools;
 use once_cell::sync::Lazy;
+use std::{
+    collections::{HashMap, HashSet, VecDeque},
+    iter::zip,
+};
 
 use crate::{utils::files::lines_from_file, Solution, SolutionPair};
 
 pub fn solve() -> SolutionPair {
     let codes = lines_from_file("input/day21.txt");
     let mut sol1 = 0;
+    let mut sol2 = 0;
+
     for code in codes {
         let num: i64 = code[0..3].parse().expect("Integer value not found");
-        sol1 += num * solve_code_pt1(code, "AAA".to_string()).expect("Must have solution");
+        sol1 += num * solve_pt1(code.clone(), "AAA".to_string()).expect("Must have a p1 solution");
+        sol2 += num * solve_pt2(code.clone(), 25).expect("Must have a p2 solution");
     }
 
-    (Solution::from(sol1), Solution::from("N/A"))
+    (Solution::from(sol1), Solution::from(sol2))
 }
 
 static DIR_PAD: Lazy<BiMap<char, (i64, i64)>> = Lazy::new(|| {
@@ -42,7 +49,7 @@ static NUM_PAD: Lazy<BiMap<char, (i64, i64)>> = Lazy::new(|| {
     map
 });
 
-fn solve_code_pt1(code: String, initial_state: String) -> Option<i64> {
+fn solve_pt1(code: String, initial_state: String) -> Option<i64> {
     let mut queue: VecDeque<(i64, Vec<char>, Vec<char>)> =
         VecDeque::from([(0, code.chars().collect(), initial_state.chars().collect())]);
 
@@ -113,7 +120,84 @@ fn find_next(direction: char, current: char, num_pad: bool) -> Option<char> {
     pad.get_by_right(&new_location).copied()
 }
 
-#[test]
-fn s() {
-    solve();
+fn solve_pt2(code: String, depth: i32) -> Option<i64> {
+    let num_pad_map = build_dir_map(true);
+    let dir_pad_map = build_dir_map(false);
+
+    let potential_paths = layer_one_paths(code.to_owned(), &num_pad_map);
+    potential_paths
+        .iter()
+        .map(|c| calculate_length(c, depth, &dir_pad_map))
+        .min()
+}
+
+#[cached(key = "(String, i32)", convert = "{ (sequence.to_string(), depth) }")]
+fn calculate_length(sequence: &str, depth: i32, dir_pad_map: &HashMap<String, Vec<String>>) -> i64 {
+    if depth == 1 {
+        return sequence
+            .chars()
+            .zip("A".chars().chain(sequence.chars()))
+            .map(|(x, y)| dir_pad_map.get(&format!("{x}{y}")).unwrap()[0].len() as i64)
+            .sum();
+    }
+
+    sequence
+        .chars()
+        .zip("A".chars().chain(sequence.chars()))
+        .map(|(x, y)| {
+            dir_pad_map
+                .get(&format!("{y}{x}"))
+                .unwrap()
+                .iter()
+                .map(|subseq| calculate_length(subseq, depth - 1, &dir_pad_map))
+                .min()
+                .unwrap_or(0)
+        })
+        .sum()
+}
+
+fn layer_one_paths(code: String, num_pad: &HashMap<String, Vec<String>>) -> Vec<String> {
+    zip(("A".to_string() + &code).chars(), code.chars())
+        .map(|(f, t)| format!("{f}{t}"))
+        .filter_map(|m| num_pad.get(&m))
+        .multi_cartesian_product()
+        .map(|combination| combination.iter().map(|s| s.as_str()).collect::<String>())
+        .collect()
+}
+
+fn build_dir_map(num_pad: bool) -> HashMap<String, Vec<String>> {
+    let mut dir_map = HashMap::new();
+
+    let pad = if num_pad { &NUM_PAD } else { &DIR_PAD };
+    for from in pad.left_values() {
+        for to in pad.left_values() {
+            let mut q: VecDeque<(char, Vec<char>)> = VecDeque::from([(*from, Vec::new())]);
+            let mut visited = HashSet::new();
+            let mut shortest_paths: Vec<String> = Vec::new();
+
+            while let Some((current, journey)) = q.pop_front() {
+                if current == *to {
+                    if shortest_paths.is_empty() || journey.len() + 1 == shortest_paths[0].len() {
+                        shortest_paths.push(String::from_iter(journey) + "A");
+                    }
+                    continue;
+                }
+
+                for dir in ['^', '>', 'v', '<'] {
+                    if let Some(next) = find_next(dir, current, num_pad) {
+                        if visited.contains(&next) {
+                            continue;
+                        }
+                        let mut new_journey = journey.clone();
+                        new_journey.push(dir);
+                        q.push_back((next, new_journey));
+                    }
+                }
+
+                visited.insert(current);
+            }
+            dir_map.insert(format!("{}{}", from, to), shortest_paths);
+        }
+    }
+    dir_map
 }

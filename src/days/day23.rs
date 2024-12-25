@@ -69,7 +69,6 @@ fn bron_kerbosch<'a>(
 
     let pivot = p.union(x).next().unwrap();
     let pivot_neighbors: HashSet<&str> = graph.get(pivot).cloned().unwrap_or_else(HashSet::new);
-
     let p_without_pivot_neighbors: Vec<_> = p.difference(&pivot_neighbors).copied().collect();
 
     for &v in &p_without_pivot_neighbors {
